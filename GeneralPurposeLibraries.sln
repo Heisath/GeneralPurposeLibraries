@@ -3,7 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralPurposeNetworkLib", "GeneralPurposeNetworkLib\GeneralPurposeNetworkLib.csproj", "{D50F8B75-0827-4224-98E0-8D90ABFA662A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralPurposeNetworkLib.Tester", "GeneralPurposeNetworkLib.Tester\GeneralPurposeNetworkLib.Tester.csproj", "{B04A4F28-1DA5-4236-B419-3CE1B0545E3F}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D50F8B75-0827-4224-98E0-8D90ABFA662A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D50F8B75-0827-4224-98E0-8D90ABFA662A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D50F8B75-0827-4224-98E0-8D90ABFA662A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D50F8B75-0827-4224-98E0-8D90ABFA662A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B04A4F28-1DA5-4236-B419-3CE1B0545E3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B04A4F28-1DA5-4236-B419-3CE1B0545E3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B04A4F28-1DA5-4236-B419-3CE1B0545E3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B04A4F28-1DA5-4236-B419-3CE1B0545E3F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

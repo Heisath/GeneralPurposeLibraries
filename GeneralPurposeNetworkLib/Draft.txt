@@ -1,0 +1,16 @@
+﻿TCP submodule:
+(x)	Encoded Connection
+(x)	Based on json objects
+(x)	automatic ping / timeout messages (use bytes here for minimum load)
+(x)	alternative byte oriented approach (maybe only udp?)
+
+UDP submodule:
+	fast
+	direct (byte) approach
+	alternatively safe(?) using json
+	encoded(?)
+
+
+General:
+	strongly typed
+	ignores unused fields (downwardscompatible)
