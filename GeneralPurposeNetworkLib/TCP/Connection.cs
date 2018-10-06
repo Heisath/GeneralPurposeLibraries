@@ -80,8 +80,12 @@ namespace GeneralPurposeNetworkLib.TCP
                 }
             }
 
+            Logger.WriteLine("Received HELO, starting encryption", Logger.Level.Info);
+            
             CryptLibrary newEncryption = new CryptLibrary();
             newEncryption.PerformServerSideKeyExchange(newStream);
+
+            Logger.WriteLine("Connection is encrypted", Logger.Level.Info);
 
             Connection connection = new Connection
             {
@@ -203,7 +207,7 @@ namespace GeneralPurposeNetworkLib.TCP
                         Logger.WriteLine("Received ping, rtt: " + RoundTripTime.TotalMilliseconds, Logger.Level.Info);
                         break;
                     case SystemMessageType.Connect:
-                        Logger.WriteLine("Connection request", Logger.Level.Info);
+                        Logger.WriteLine("Connection request, ok", Logger.Level.Info);
                         Connected = true;
                         stream.WriteSystemMessage(SystemMessageType.ConnectOk);
                         OnConnected?.Invoke(this);

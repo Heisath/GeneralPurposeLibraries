@@ -12,5 +12,5 @@ UDP submodule:
 
 
 General:
-	strongly typed
-	ignores unused fields (downwardscompatible)
+	(x)strongly typed
+	(x)ignores unused fields (downwardscompatible)
