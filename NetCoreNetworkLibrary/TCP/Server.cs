@@ -1,9 +1,9 @@
-﻿using GeneralPurposeNetworkLib.Shared;
+﻿using NetCoreNetworkLibrary.Shared;
 using System;
 using System.Net;
 using System.Net.Sockets;
 
-namespace GeneralPurposeNetworkLib.TCP
+namespace NetCoreNetworkLibrary.TCP
 {
     public class Server : IDisposable
     {

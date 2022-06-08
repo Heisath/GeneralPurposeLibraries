@@ -7,9 +7,9 @@
     <ProjectGuid>{D50F8B75-0827-4224-98E0-8D90ABFA662A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeneralPurposeNetworkLib</RootNamespace>
-    <AssemblyName>GeneralPurposeNetworkLib</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <RootNamespace>NetCoreNetworkLibrary</RootNamespace>
+    <AssemblyName>NetCoreNetworkLibrary</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />

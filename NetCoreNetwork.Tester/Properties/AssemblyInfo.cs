@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GeneralPurposeNetworkLib")]
+[assembly: AssemblyTitle("NetCoreNetwork.Tester")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GeneralPurposeNetworkLib")]
+[assembly: AssemblyProduct("NetCoreNetwork.Tester")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d50f8b75-0827-4224-98e0-8d90abfa662a")]
+[assembly: Guid("b04a4f28-1da5-4236-b419-3ce1b0545e3f")]
 
 // Version information for an assembly consists of the following four values:
 //

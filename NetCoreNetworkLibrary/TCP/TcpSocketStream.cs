@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 
-namespace GeneralPurposeNetworkLib.TCP
+namespace NetCoreNetworkLibrary.TCP
 {
     public class TcpSocketStream : NetworkStream
     {

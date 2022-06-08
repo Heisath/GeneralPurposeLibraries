@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GeneralPurposeNetworkLib.TCP;
-using GeneralPurposeNetworkLib.Shared;
+using NetCoreNetworkLibrary.TCP;
+using NetCoreNetworkLibrary.Shared;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace GeneralPurposeNetworkLib.Tester
+namespace NetCoreNetworkLibrary.Tester
 {
     class Program
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace GeneralPurposeNetworkLib.Shared
+namespace NetCoreNetworkLibrary.Shared
 {
     public static class StreamExtension
     {

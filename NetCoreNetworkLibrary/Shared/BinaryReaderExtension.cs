@@ -1,9 +1,9 @@
-﻿using GeneralPurposeNetworkLib.Shared;
-using GeneralPurposeNetworkLib.TCP;
+﻿using NetCoreNetworkLibrary.Shared;
+using NetCoreNetworkLibrary.TCP;
 using System.IO;
 using System.Text;
 
-namespace GeneralPurposeNetworkLib.Shared
+namespace NetCoreNetworkLibrary.Shared
 {
 
     public static class BinaryReaderExtension

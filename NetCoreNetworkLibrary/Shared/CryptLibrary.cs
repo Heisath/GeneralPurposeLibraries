@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 
-namespace GeneralPurposeNetworkLib.Shared
+namespace NetCoreNetworkLibrary.Shared
 {
     public class CryptLibrary
     {

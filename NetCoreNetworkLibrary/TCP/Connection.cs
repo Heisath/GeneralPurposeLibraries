@@ -1,4 +1,4 @@
-﻿using GeneralPurposeNetworkLib.Shared;
+﻿using NetCoreNetworkLibrary.Shared;
 using System;
 using System.IO;
 using System.Net;
@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace GeneralPurposeNetworkLib.TCP
+namespace NetCoreNetworkLibrary.TCP
 {
     public class Connection
     {
@@ -234,7 +234,7 @@ namespace GeneralPurposeNetworkLib.TCP
                             string jsonString = Encoding.UTF8.GetString(decryptedData);
 
                             dynamic jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
-
+                            
                             OnJsonMessageReceived(this, jsonObject);
                         }
                         break;
