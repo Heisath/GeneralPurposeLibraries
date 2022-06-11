@@ -1,4 +1,4 @@
-﻿namespace NetCoreNetworkLibrary.Shared
+﻿namespace NetCoreNetwork.Shared
 {
     public enum SystemMessageType : byte
     {

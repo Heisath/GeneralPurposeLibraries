@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace NetCoreNetworkLibrary.Shared
+namespace NetCoreNetwork.Shared
 {
     public static class BinaryWriterExtension
     {

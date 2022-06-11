@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace NetCoreNetworkLibrary.Shared
+namespace NetCoreNetwork.Shared
 {
     public static class Logger
     {

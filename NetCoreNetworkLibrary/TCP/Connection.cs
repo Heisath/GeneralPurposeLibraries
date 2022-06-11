@@ -1,4 +1,4 @@
-﻿using NetCoreNetworkLibrary.Shared;
+﻿using NetCoreNetwork.Shared;
 using System;
 using System.IO;
 using System.Net;
@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace NetCoreNetworkLibrary.TCP
+namespace NetCoreNetwork.TCP
 {
     public class Connection
     {
@@ -233,9 +233,9 @@ namespace NetCoreNetworkLibrary.TCP
 
                             string jsonString = Encoding.UTF8.GetString(decryptedData);
 
-                            dynamic jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+                            //dynamic jsonObject = System.Text.Json.JsonSerializer.DeserializeObject(jsonString);
                             
-                            OnJsonMessageReceived(this, jsonObject);
+                            //OnJsonMessageReceived(this, jsonObject);
                         }
                         break;
                     case SystemMessageType.RawMessage:
@@ -259,7 +259,7 @@ namespace NetCoreNetworkLibrary.TCP
 
         public bool SendJsonMessage(object jsonObject)
         {
-            string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(jsonObject);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(jsonObject);
             byte[] decryptedData = Encoding.UTF8.GetBytes(jsonString);
             byte[] encryptedData = Encryption.EncryptBuffer(decryptedData);
 

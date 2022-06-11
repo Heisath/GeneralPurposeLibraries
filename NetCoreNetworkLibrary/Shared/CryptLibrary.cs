@@ -2,8 +2,9 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
+using System.Text.Json;
 
-namespace NetCoreNetworkLibrary.Shared
+namespace NetCoreNetwork.Shared
 {
     public class CryptLibrary
     {
@@ -17,19 +18,20 @@ namespace NetCoreNetworkLibrary.Shared
 
         private bool initialized;
 
-        private static RSAParameters privateRSAParams;
-        private static RSAParameters publicRSAParams;
+        private byte[] PrivateRSAKey;
+        private byte[] PublicRSAKey;
+
 
         public byte[] EncryptBuffer(byte[] buffer)
         {
             if (!initialized) return buffer;
             byte[] encMessage; // the encrypted bytes
             
-            using (var rijndael = new RijndaelManaged())
+            using (var aes = Aes.Create("AesManaged"))
             {
-                rijndael.Key = Key;
-                rijndael.IV = IV;
-                encMessage = EncryptBytes(rijndael, buffer);
+                aes.Key = Key;
+                aes.IV = IV;
+                encMessage = EncryptBytes(aes, buffer);
             }
 
             return encMessage;
@@ -39,41 +41,25 @@ namespace NetCoreNetworkLibrary.Shared
             if (!initialized) return buffer;
             byte[] decMessage; // the decrypted bytes - s/b same as message
 
-            using (var rijndael = new RijndaelManaged())
+            using (var aes = Aes.Create("AesManaged"))
             {
-                rijndael.Key = Key;
-                rijndael.IV = IV;
-                decMessage = DecryptBytes(rijndael, buffer);
+                aes.Key = Key;
+                aes.IV = IV;
+                decMessage = DecryptBytes(aes, buffer);
             }
 
             return decMessage;
         }
 
-        public static void PrepareRSA()
-        {
-            //Create a new instance of the RSACryptoServiceProvider class.  
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(2048))
-            {
-                publicRSAParams = RSA.ExportParameters(false);
-                privateRSAParams = RSA.ExportParameters(true);
-            }
-        }
+        
         public void PerformServerSideKeyExchange(Stream stream)
         {
-            byte[] buffer;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, publicRSAParams);
+            CreateAsymmetricKey();
 
-                buffer = ms.ToArray();
-            }
-
-            byte[] size = BitConverter.GetBytes(buffer.Length);
+            byte[] size = BitConverter.GetBytes(PublicRSAKey.Length);
             stream.Write(size, 0, size.Length);
-            stream.Write(buffer, 0, buffer.Length);
+            stream.Write(PublicRSAKey, 0, PublicRSAKey.Length);
             stream.Flush();
-
 
             byte[] buf = new byte[4];
             stream.Read(buf, 0, buf.Length);
@@ -90,7 +76,7 @@ namespace NetCoreNetworkLibrary.Shared
 
             EncryptedIV = buf;
 
-            DecryptRSA();
+            DecryptSymmetricKey();
 
             initialized = true;
         }
@@ -99,23 +85,12 @@ namespace NetCoreNetworkLibrary.Shared
             byte[] buf = new byte[4];
             stream.Read(buf, 0, buf.Length);
 
-            buf = new byte[BitConverter.ToInt32(buf, 0)];
-            stream.Read(buf, 0, buf.Length);
+            PublicRSAKey = new byte[BitConverter.ToInt32(buf, 0)];
+            stream.Read(PublicRSAKey, 0, PublicRSAKey.Length);
 
-            RSAParameters rsaparams;
-            using (MemoryStream ms = new MemoryStream(buf))
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                object obj = bf.Deserialize(ms);
+            CreateSymmetricKey();
+            EncryptSymmetricKey();
 
-                if (obj is RSAParameters)
-                {
-                    rsaparams = (RSAParameters)obj;
-                    publicRSAParams = rsaparams;
-                    CreateSymmetricKey();
-                    EncryptRSA();
-                }
-            }
             byte[] size = BitConverter.GetBytes(EncryptedKey.Length);
             stream.Write(size, 0, size.Length);
             stream.Write(EncryptedKey, 0, EncryptedKey.Length);
@@ -129,39 +104,44 @@ namespace NetCoreNetworkLibrary.Shared
             initialized = true;
         }
 
-        private void CreateSymmetricKey()
-        {
-            //Create a new instance of the RijndaelManaged class.  
-            RijndaelManaged RM = new RijndaelManaged();
-            RM.GenerateIV();
-            RM.GenerateKey();
-
-            Key = RM.Key;
-            IV = RM.IV;
-        }
-        private void EncryptRSA()
-        {
-            //Encrypt the symmetric key and IV.  
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-            {
-                //Import key parameters into RSA.  
-                RSA.ImportParameters(publicRSAParams);
-
-                EncryptedKey = RSA.Encrypt(Key, false);
-                EncryptedIV = RSA.Encrypt(IV, false);
-            }
-        }
-        private void DecryptRSA()
+        private void CreateAsymmetricKey()
         {
             //Create a new instance of the RSACryptoServiceProvider class.  
-            using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-            {
-                RSA.ImportParameters(privateRSAParams);
+            using RSACryptoServiceProvider RSA = new RSACryptoServiceProvider(2048);
+            PublicRSAKey = RSA.ExportRSAPublicKey();
+            PrivateRSAKey = RSA.ExportRSAPrivateKey();
+        }
 
-                //Decrypt the symmetric key and IV.  
-                Key = RSA.Decrypt(EncryptedKey, false);
-                IV = RSA.Decrypt(EncryptedIV, false);
-            }
+        private void CreateSymmetricKey()
+        {
+            var aes = Aes.Create("AesManaged");
+            aes.GenerateIV();
+            aes.GenerateKey();
+
+            Key = aes.Key;
+            IV = aes.IV;
+        }
+
+        private void EncryptSymmetricKey()
+        {
+            //Encrypt the symmetric key and IV.  
+            using RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+            //Import key parameters into RSA.  
+            RSA.ImportRSAPublicKey(PublicRSAKey, out _);
+
+            EncryptedKey = RSA.Encrypt(Key, false);
+            EncryptedIV = RSA.Encrypt(IV, false);
+        }
+
+        private void DecryptSymmetricKey()
+        {
+            //Create a new instance of the RSACryptoServiceProvider class.  
+            using RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
+            RSA.ImportRSAPrivateKey(PrivateRSAKey, out _);
+
+            //Decrypt the symmetric key and IV.  
+            Key = RSA.Decrypt(EncryptedKey, false);
+            IV = RSA.Decrypt(EncryptedIV, false);
         }
 
         private byte[] EncryptBytes(SymmetricAlgorithm alg, byte[] message)

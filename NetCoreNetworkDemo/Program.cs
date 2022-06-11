@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NetCoreNetworkLibrary.TCP;
-using NetCoreNetworkLibrary.Shared;
+using NetCoreNetwork.TCP;
+using NetCoreNetwork.Shared;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace NetCoreNetworkLibrary.Tester
+namespace NetCoreNetworkDemo
 {
     class Program
     {
@@ -18,7 +18,6 @@ namespace NetCoreNetworkLibrary.Tester
         {
             Logger.Verbosity = Logger.Level.Everything;
 
-            CryptLibrary.PrepareRSA();
             Server server = new Server(12345);
 
             server.OnNewConnection +=

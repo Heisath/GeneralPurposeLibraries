@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NetCoreNetworkLibrary.Shared
+namespace NetCoreNetwork.Shared
 {
     public class ConnectionSettings
     {
