@@ -22,15 +22,6 @@ namespace NetCoreNetwork.Shared
             }
             catch (Exception) { }
         }
-        public static void WriteBytes(this BinaryWriter writer, byte[] buf, int index, int count)
-        {
-            try
-            {
-                writer.Write(buf, index, count);
-            }
-            catch (Exception) { }
-        }
-
         public static void WriteLine(this BinaryWriter writer, string str)
         {
             byte[] stringbuf = Encoding.UTF8.GetBytes(str);

@@ -18,7 +18,7 @@ namespace NetCoreNetworkDemo
         {
             Logger.Verbosity = Logger.Level.Everything;
 
-            Server server = new Server(12345);
+            Server server = new Server(54321);
 
             server.OnNewConnection +=
                 (Server s, Connection con) =>
@@ -38,7 +38,7 @@ namespace NetCoreNetworkDemo
                 };
 
             Connection client = new Connection();
-            client.Start("127.0.0.1", 12345);
+            client.Start("127.0.0.1", 54321);
 
             client.OnRawMessageReceived +=
                     (Connection c, byte[] data) =>
@@ -47,7 +47,7 @@ namespace NetCoreNetworkDemo
                     };
 
             Connection client2 = new Connection();
-            client2.Start("127.0.0.1", 12345);
+            client2.Start("127.0.0.1", 54321);
 
             client2.OnRawMessageReceived +=
                     (Connection c, byte[] data) =>

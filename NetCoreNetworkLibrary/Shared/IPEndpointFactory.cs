@@ -33,7 +33,7 @@ namespace NetCoreNetwork.Shared
                     port = GetPort(values[1]);
 
                 //try to use the address as IPv4, otherwise get hostname
-                if (!IPAddress.TryParse(values[0], out ipaddy) && ipaddy != null)
+                if (!IPAddress.TryParse(values[0], out ipaddy))
                     ipaddy = GetIPfromHost(values[0]);
             }
             else if (values.Length > 2) //ipv6
@@ -76,6 +76,11 @@ namespace NetCoreNetwork.Shared
 
             if (hosts == null || hosts.Length == 0)
                 throw new ArgumentException(string.Format("Host not found: {0}", p));
+            
+            if (hosts.Any(x=>x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork))
+            {
+                return Array.Find(hosts,x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
+            }
 
             return hosts[0];
         }

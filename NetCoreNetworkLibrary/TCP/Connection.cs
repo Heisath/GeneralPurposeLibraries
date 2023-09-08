@@ -220,7 +220,6 @@ namespace NetCoreNetwork.TCP
                         OnConnected?.Invoke(this);
                         Logger.WriteLine("Connection accepted", Logger.Level.Info);
                         break;
-
                     case SystemMessageType.Disconnect:
                         Logger.WriteLine("Disconnect recv.", Logger.Level.Info);
                         Stop(keepAlive: false);
@@ -242,7 +241,6 @@ namespace NetCoreNetwork.TCP
                         break;
                     case SystemMessageType.RawMessage:
                         {
-
                             int length = stream.ReadInt32();
                             byte[] encryptedData = new byte[length];
                             stream.Read(encryptedData, 0, length);
@@ -281,12 +279,12 @@ namespace NetCoreNetwork.TCP
 
         }
 
-        public bool SendRawMessage(byte[] decryptedData)
+        public bool SendRawMessage(byte[] data)
         {
             if (stream == null || Encryption == null)
                 return false;
 
-            byte[] encryptedData = Encryption.EncryptBuffer(decryptedData);
+            byte[] encryptedData = Encryption.EncryptBuffer(data);
 
             try
             {

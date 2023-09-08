@@ -7,22 +7,38 @@ namespace NetCoreNetwork.Shared
     {
         public static void WriteSystemMessage(this Stream stream, SystemMessageType message)
         {
-            stream.WriteByte((byte)message);
+            try
+            {
+                stream.WriteByte((byte)message);
+            }
+            catch (Exception) { }
         }
         public static SystemMessageType ReadSystemMessage(this Stream stream)
         {
-            return (SystemMessageType)(byte)stream.ReadByte();
+            try
+            {
+                return (SystemMessageType)(byte)stream.ReadByte();
+            }
+            catch (Exception) { return SystemMessageType.Nothing; }
         }
 
         public static void WriteInt32(this Stream stream, int v)
         {
-            stream.Write(BitConverter.GetBytes(v), 0, 4);
+            try
+            {
+                stream.Write(BitConverter.GetBytes(v), 0, 4);
+            }
+            catch (Exception) { }
         }
         public static int ReadInt32(this Stream stream)
         {
-            byte[] vs = new byte[4];
-            stream.Read(vs, 0, 4);
-            return BitConverter.ToInt32(vs, 0);
+            try
+            {
+                byte[] vs = new byte[4];
+                stream.Read(vs, 0, 4);
+                return BitConverter.ToInt32(vs, 0);
+            }
+            catch (Exception) { return Int32.MinValue; }
         }
 
     }
