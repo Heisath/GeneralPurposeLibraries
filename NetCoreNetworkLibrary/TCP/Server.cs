@@ -8,9 +8,9 @@ namespace NetCoreNetwork.TCP
     public class Server : IDisposable
     {
         public delegate void NewConnectionHandler(Server sender, Connection client);
-        public event NewConnectionHandler OnNewConnection;
+        public event NewConnectionHandler? OnNewConnection;
 
-        private Socket serverSocket;
+        private readonly Socket serverSocket;
         public int Port { get; private set; }
 
         public Server(int port)
@@ -37,7 +37,7 @@ namespace NetCoreNetwork.TCP
                 Socket newSocket = serverSocket.EndAccept(result);
                 if (newSocket != null)
                 {
-                    Connection newConnection = Connection.ProcessConnectionRequest(newSocket);
+                    Connection? newConnection = Connection.ProcessConnectionRequest(newSocket);
                     if (newConnection != null) OnNewConnection?.Invoke(this, newConnection);
                 }
             }
@@ -51,7 +51,6 @@ namespace NetCoreNetwork.TCP
         public void Dispose()
         {
             serverSocket.Close();
-            serverSocket = null;
         }
 
     }

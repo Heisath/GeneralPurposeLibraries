@@ -11,22 +11,22 @@ namespace NetCoreNetwork.TCP
     public class Connection
     {
         public delegate void JsonMessageReceivedHandler(Connection sender, dynamic message);
-        public event JsonMessageReceivedHandler OnJsonMessageReceived;
+        public event JsonMessageReceivedHandler? OnJsonMessageReceived;
 
         public delegate void RawMessageReceivedHandler(Connection sender, byte[] message);
-        public event RawMessageReceivedHandler OnRawMessageReceived;
+        public event RawMessageReceivedHandler? OnRawMessageReceived;
 
         public delegate void ConnectionInfoHandler(Connection sender);
-        public event ConnectionInfoHandler OnConnected;
-        public event ConnectionInfoHandler OnDisconnected;
-        public event ConnectionInfoHandler OnConnectionLost;
+        public event ConnectionInfoHandler? OnConnected;
+        public event ConnectionInfoHandler? OnDisconnected;
+        public event ConnectionInfoHandler? OnConnectionLost;
 
         public ConnectionSettings Settings { get; set; } = new ConnectionSettings();
 
 
-        private Socket socket;
-        private TcpSocketStream stream;
-        public IPEndPoint EndPoint { get; private set; }
+        private Socket? socket;
+        private TcpSocketStream? stream;
+        public IPEndPoint? EndPoint { get; private set; }
         public bool Connected { get; private set; }
         public bool IsClient { get; private set; }
 
@@ -37,10 +37,10 @@ namespace NetCoreNetwork.TCP
         private DateTime lastPingRecv;
         private byte pingMsg;
 
-        private Thread thread;
+        private Thread? thread;
         private bool threadRunning;
 
-        private CryptLibrary Encryption { get; set; }
+        private CryptLibrary? Encryption { get; set; }
 
         public Connection()
         {
@@ -66,7 +66,7 @@ namespace NetCoreNetwork.TCP
             Logger.WriteLine("Client started.", Logger.Level.Info);
         }
 
-        internal static Connection ProcessConnectionRequest(Socket newSocket)
+        internal static Connection? ProcessConnectionRequest(Socket newSocket)
         {
             TcpSocketStream newStream = new TcpSocketStream(newSocket, true);
 
@@ -126,6 +126,9 @@ namespace NetCoreNetwork.TCP
 
         private void Connect()
         {
+            if (EndPoint == null)
+                throw new NullReferenceException("EndPoint not selected!");
+
             socket = new Socket(SocketType.Stream, ProtocolType.Tcp) { Blocking = true, NoDelay = true };
             try
             {
@@ -180,13 +183,13 @@ namespace NetCoreNetwork.TCP
 
                 if (DateTime.Now - lastPingRecv > TimeSpan.FromSeconds(Settings.PingTimeout))
                 {
-                    _stop();
+                    Stop();
                     OnConnectionLost?.Invoke(this);
                     return;
                 }
             }
 
-            while (stream.IsConnected && stream.DataAvailable)
+            while ((stream?.IsConnected ?? false) && (stream?.DataAvailable ?? false))
             {
                 SystemMessageType cmd = stream.ReadSystemMessage();
                 switch (cmd)
@@ -220,7 +223,7 @@ namespace NetCoreNetwork.TCP
 
                     case SystemMessageType.Disconnect:
                         Logger.WriteLine("Disconnect recv.", Logger.Level.Info);
-                        _stop(keepAlive: false);
+                        Stop(keepAlive: false);
                         OnDisconnected?.Invoke(this);
                         return;
                     case SystemMessageType.JsonMessage:
@@ -229,13 +232,15 @@ namespace NetCoreNetwork.TCP
                             byte[] encryptedData = new byte[length];
                             stream.Read(encryptedData, 0, length);
 
-                            byte[] decryptedData = Encryption.DecryptBuffer(encryptedData);
+                            byte[]? decryptedData = Encryption?.DecryptBuffer(encryptedData);
+                            if (decryptedData != null)
+                            {
+                                string jsonString = Encoding.UTF8.GetString(decryptedData);
 
-                            string jsonString = Encoding.UTF8.GetString(decryptedData);
+                                //dynamic jsonObject = System.Text.Json.JsonSerializer.DeserializeObject(jsonString);
 
-                            //dynamic jsonObject = System.Text.Json.JsonSerializer.DeserializeObject(jsonString);
-                            
-                            //OnJsonMessageReceived(this, jsonObject);
+                                //OnJsonMessageReceived(this, jsonObject);
+                            }
                         }
                         break;
                     case SystemMessageType.RawMessage:
@@ -245,9 +250,9 @@ namespace NetCoreNetwork.TCP
                             byte[] encryptedData = new byte[length];
                             stream.Read(encryptedData, 0, length);
 
-                            byte[] decryptedData = Encryption.DecryptBuffer(encryptedData);
-
-                            OnRawMessageReceived?.Invoke(this, decryptedData);
+                            byte[]? decryptedData = Encryption?.DecryptBuffer(encryptedData);
+                            if (decryptedData != null)
+                                OnRawMessageReceived?.Invoke(this, decryptedData);
                         }
                         break;
                     default:
@@ -259,6 +264,9 @@ namespace NetCoreNetwork.TCP
 
         public bool SendJsonMessage(object jsonObject)
         {
+            if (stream == null || Encryption == null)
+                return false;
+
             string jsonString = System.Text.Json.JsonSerializer.Serialize(jsonObject);
             byte[] decryptedData = Encoding.UTF8.GetBytes(jsonString);
             byte[] encryptedData = Encryption.EncryptBuffer(decryptedData);
@@ -279,6 +287,9 @@ namespace NetCoreNetwork.TCP
 
         public bool SendRawMessage(byte[] decryptedData)
         {
+            if (stream == null || Encryption == null)
+                return false;
+
             byte[] encryptedData = Encryption.EncryptBuffer(decryptedData);
 
             try
@@ -294,20 +305,30 @@ namespace NetCoreNetwork.TCP
             }
         }
 
-        private void SendPing()
+        private bool SendPing()
         {
-            pingMsg = (byte)((new Random()).Next(1, 254));
-            stream.WriteSystemMessage(SystemMessageType.Ping);
-            stream.WriteByte(pingMsg);
-            lastPingSent = DateTime.Now;
-            Logger.WriteLine("Sent ping.", Logger.Level.Info);
+            if (stream == null) return false;
+            try
+            {
+                pingMsg = (byte)((new Random()).Next(1, 254));
+                stream.WriteSystemMessage(SystemMessageType.Ping);
+                stream.WriteByte(pingMsg);
+                lastPingSent = DateTime.Now;
+                Logger.WriteLine("Sent ping.", Logger.Level.Info);
+                return true;
+            }
+            catch(IOException exception)
+            {
+                Logger.WriteLine($"Ping failed: {exception.Message}", Logger.Level.Error);
+                return false;
+            }
         }
 
         public void Stop()
         {
-            this._stop(false);
+            this.Stop(false);
         }
-        private void _stop(bool? keepAlive = null)
+        private void Stop(bool? keepAlive = null)
         {
             Logger.WriteLine("closing connection.", Logger.Level.Info);
 
@@ -319,7 +340,7 @@ namespace NetCoreNetwork.TCP
             if (keepAlive == false) threadRunning = false;
             if (!Connected) return;
 
-            stream.WriteSystemMessage(SystemMessageType.Disconnect);
+            stream?.WriteSystemMessage(SystemMessageType.Disconnect);
 
             Connected = false;
             RoundTripTime = TimeSpan.Zero;
@@ -329,7 +350,7 @@ namespace NetCoreNetwork.TCP
 
         }
 
-        public void Restart() => _stop(true);
+        public void Restart() => Stop(true);
 
 
     }

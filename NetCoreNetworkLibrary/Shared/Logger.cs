@@ -51,6 +51,6 @@ namespace NetCoreNetwork.Shared
             writer?.Write(callerTypeName + "->" + caller + ": " + msg);
         }
 
-        public static string ReadLine() => reader?.ReadLine();
+        //public static string ReadLine() => reader.ReadLine();
     }
 }

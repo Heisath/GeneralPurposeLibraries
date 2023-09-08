@@ -11,7 +11,7 @@ namespace NetCoreNetwork.TCP
         }
 
 
-        // You can use the Socket method to examine the underlying Socket.
+        // You can use the Socket property to examine the underlying Socket.
         public bool IsConnected
         {
             get
