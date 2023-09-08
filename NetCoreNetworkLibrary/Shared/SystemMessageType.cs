@@ -8,7 +8,7 @@
         Ping,
         PingOk,
         Disconnect,
-        JsonMessage,
+        TextMessage,
         RawMessage
     }
 }

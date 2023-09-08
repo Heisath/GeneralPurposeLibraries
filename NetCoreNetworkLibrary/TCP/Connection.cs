@@ -10,8 +10,8 @@ namespace NetCoreNetwork.TCP
 {
     public class Connection
     {
-        public delegate void JsonMessageReceivedHandler(Connection sender, dynamic message);
-        public event JsonMessageReceivedHandler? OnJsonMessageReceived;
+        public delegate void TextMessageReceivedHandler(Connection sender, string message);
+        public event TextMessageReceivedHandler? OnTextMessageReceived;
 
         public delegate void RawMessageReceivedHandler(Connection sender, byte[] message);
         public event RawMessageReceivedHandler? OnRawMessageReceived;
@@ -226,7 +226,7 @@ namespace NetCoreNetwork.TCP
                         Stop(keepAlive: false);
                         OnDisconnected?.Invoke(this);
                         return;
-                    case SystemMessageType.JsonMessage:
+                    case SystemMessageType.TextMessage:
                         {
                             int length = stream.ReadInt32();
                             byte[] encryptedData = new byte[length];
@@ -235,11 +235,8 @@ namespace NetCoreNetwork.TCP
                             byte[]? decryptedData = Encryption?.DecryptBuffer(encryptedData);
                             if (decryptedData != null)
                             {
-                                string jsonString = Encoding.UTF8.GetString(decryptedData);
-
-                                //dynamic jsonObject = System.Text.Json.JsonSerializer.DeserializeObject(jsonString);
-
-                                //OnJsonMessageReceived(this, jsonObject);
+                                string message = Encoding.UTF8.GetString(decryptedData);
+                                OnTextMessageReceived?.Invoke(this, message);
                             }
                         }
                         break;
@@ -262,18 +259,17 @@ namespace NetCoreNetwork.TCP
             }
         }
 
-        public bool SendJsonMessage(object jsonObject)
+        public bool SendTextMessage(string message)
         {
             if (stream == null || Encryption == null)
                 return false;
 
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(jsonObject);
-            byte[] decryptedData = Encoding.UTF8.GetBytes(jsonString);
+            byte[] decryptedData = Encoding.UTF8.GetBytes(message);
             byte[] encryptedData = Encryption.EncryptBuffer(decryptedData);
 
             try
             {
-                stream.WriteSystemMessage(SystemMessageType.JsonMessage);
+                stream.WriteSystemMessage(SystemMessageType.TextMessage);
                 stream.WriteInt32(encryptedData.Length);
                 stream.Write(encryptedData, 0, encryptedData.Length);
                 return true;

@@ -29,10 +29,10 @@ namespace NetCoreNetworkDemo
                         Console.WriteLine("* s recv: " + Encoding.UTF8.GetString(data));
                         c.SendRawMessage(Encoding.UTF8.GetBytes("Response"));
                     };
-                    con.OnJsonMessageReceived +=
-                    (Connection c, dynamic jsonObject) =>
+                    con.OnTextMessageReceived +=
+                    (Connection c, string message) =>
                     {
-                        Console.WriteLine("* sj recv: " + jsonObject.Content);
+                        Console.WriteLine("* sj recv: " + message);
 
                     };
                 };
@@ -62,7 +62,7 @@ namespace NetCoreNetworkDemo
                 Console.ReadLine();
 
                 client.SendRawMessage(Encoding.UTF8.GetBytes("Hallo Welt"));
-                client2.SendJsonMessage(new { Content = "Cheers" });
+                client2.SendTextMessage("Cheers");
                 //  var o = new { Content = "test" };
                 //client.SendJsonMessage(o);
 
